@@ -1,26 +1,37 @@
+# include <map>
 # include <string>
 
 using namespace std;
 
 namespace fusion::core {
 
-    template <class type> class event {
+    class event {
         
-        private:
-            string name;
-            type target;
+        public : static class emitter {
         
-        public:
-            event (string name, type target) {
-                
+            public : event_emitter () {
+
             }
-        
-            string get_name () {
-                return name;
+
+            public : emit (string name, map data) {
+
             }
-        
-            type get_target () {
-                return target;
+
+            public : subscribe (string name) {
+
             }
+
+            public : unsubscribe () {
+
+            }
+        }
+        
+        public : static class observable {
+            
+        }
+        
+        public event () {
+            
+        }
     }
 }
