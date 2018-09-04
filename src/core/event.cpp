@@ -1,43 +1,50 @@
 # include <map>
 # include <string>
+# include <vector>
 
 using namespace std;
 
 namespace fusion::core {
 
-    class event {
-        
-        public : static class emitter {
-        
-            public : emitter () {
+    template <class target_type> class event {
+            
+        static class emitter {
+            
+            emitter () {
 
             }
 
-            public : emit (string name, map data) {
+            void emit (string name, map<string, any> data) {
 
             }
 
-            public : subscribe (string name) {
-
-            }
-
-            public : unsubscribe () {
+            observable subscribe (string name) {
 
             }
         }
         
-        public : static class observable {
+        static class observable {
             
-            public : observable () {
+            vector<function> actions;
+            
+            observable () {
                 
             }
             
-            public : for_each () {
+            observable filter (function callback) {
+                
+            }
+            
+            observable for_each (function callback) {
+                
+            }
+            
+            observable map (function callback) {
                 
             }
         }
         
-        public : event () {
+        event (string name, map<string, any> details, target_type target) {
             
         }
     }
