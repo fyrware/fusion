@@ -9,7 +9,7 @@ namespace fusion::core {
         
         public : static class emitter {
         
-            public : event_emitter () {
+            public : emitter () {
 
             }
 
@@ -28,9 +28,16 @@ namespace fusion::core {
         
         public : static class observable {
             
+            public : observable () {
+                
+            }
+            
+            public : for_each () {
+                
+            }
         }
         
-        public event () {
+        public : event () {
             
         }
     }
