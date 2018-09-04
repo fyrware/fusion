@@ -1,5 +1,5 @@
 # include <string>
-# include <event>
+# include "event.h"
 
 using namespace std;
 using namespace fusion::core;
