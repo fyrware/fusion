@@ -27,20 +27,19 @@ namespace fusion::core {
             
             vector<function> actions;
             
-            observable () {
-                
+            observable& debounce (function callback) {
+                actions.push_back(callback);
+                return this;
             }
             
-            observable filter (function callback) {
-                
+            observable& filter (function callback) {
+                actions.push_back(callback);
+                return this;
             }
             
-            observable for_each (function callback) {
-                
-            }
-            
-            observable map (function callback) {
-                
+            observable& for_each (function callback) {
+                actions.push_back(callback);
+                return this;
             }
         }
         
