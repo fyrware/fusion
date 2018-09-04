@@ -6,7 +6,7 @@ using namespace fusion::core;
 
 namespace fusion::core {
 
-    template <class type> class module extends event {
+    template <class type> class module : public event {
         
     }
 }
