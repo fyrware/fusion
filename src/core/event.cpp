@@ -27,40 +27,46 @@ namespace fusion::core {
         }
 
         static class observable {
+            
+            static enum class action {
+                debounce,
+                filter,
+                for_each
+            }
 
             vector<array<any>> actions;
 
             observable& debounce (function callback) {
-                actions.push_back({ "debounce", callback });
+                actions.push_back({ observable::action::debounce, callback });
                 return this;
             }
 
             observable& filter (function callback) {
-                actions.push_back({ "filter", callback });
+                actions.push_back({ observable::action::filter, callback });
                 return this;
             }
 
             observable& for_each (function callback) {
-                actions.push_back({ "for_each", callback });
+                actions.push_back({ observable::action::for_each, callback });
                 return this;
             }
 
             void pipe (event e) {
                 for (int i = 0, int count = actions.size(); i < count; ++i) {
                     array<any> action = actions.at(i);
-                    string name = action[ 0 ];
-                    function callback = action[ 1 ];
                     
-                    if (name.compare("debounce") == 0) {
-                        
-                    }
-                    
-                    if (name.compare("filter") == 0) {
-                        
-                    }
-                    
-                    if (name.compare("for_each") == 0) {
-                        
+                    switch (action[ 0 ]) {
+                        case observable::action::debounce:
+                            
+                            break;
+                            
+                        case observable::action::filter:
+                            
+                            break;
+                            
+                        case observable::action::for_each:
+                            
+                            break;
                     }
                 }
                 
