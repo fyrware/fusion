@@ -1,6 +1,4 @@
-# include <any>
-# include <array>
-# include <function>
+# include <functional>
 # include <map>
 # include <string>
 # include <vector>
@@ -9,7 +7,69 @@ using namespace std;
 
 namespace fusion::core {
 
-    template <class target_type> class event {
+    class event {
+
+        static class observer {
+
+            vector<function<void(event&)>> actions;
+            vector<event&> stream;
+
+            observer () {
+                
+            }
+
+            observer& debounce (function<void(event&, int)> callback) {
+                actions.emplace_back([ & ] (event& e) -> void {
+                    for (int i = 0, count = stream.size(); i < count; ++i) {
+
+                    }
+                });
+
+                return *this;
+            }
+
+            observer& filter (function<bool(event&, int)> callback) {
+                actions.emplace_back([ & ] (event& e) -> void {
+                    for (int i = 0, count = stream.size(); i < count; ++i) {
+                        
+                    }
+                });
+
+                return *this;
+            }
+
+            observer& for_each (function<void(event&, int)> callback) {
+                actions.emplace_back([ & ] (event& e) -> void {
+                    for (int i = 0, count = stream.size(); i < count; ++i) {
+                        callback(e, i);
+                    }
+                });
+
+                return *this;
+            }
+
+            template <typename return_type> observer& map (function<return_type(event&, int)> callback) {
+                actions.emplace_back([ & ] (event& e) -> void {
+                    for (int i = 0, count = stream.size(); i < count; ++i) {
+
+                    }
+                });
+
+                return *this;
+            }
+
+            void pipe (event e) {
+                stream.emplace_back(&e);
+
+                for (int i = 0, count = actions.size(); i < count; ++i) {
+                    actions.at(i)(e);
+                }
+
+                // TODO clean up memory
+
+                actions.clear();
+            }
+        };
 
         static class emitter {
 
@@ -17,65 +77,17 @@ namespace fusion::core {
 
             }
 
-            void emit (string name, map<string, any> data) {
+            void emit (string* name, map<string, int>* data) {
 
             }
 
-            event::observable subscribe (string name) {
+            observer subscribe (string* name) {
 
             }
-        }
+        };
 
-        static class observable {
-            
-            static enum class action {
-                debounce,
-                filter,
-                for_each
-            }
-
-            vector<array<any>> actions;
-
-            observable& debounce (function callback) {
-                actions.push_back({ observable::action::debounce, callback });
-                return this;
-            }
-
-            observable& filter (function callback) {
-                actions.push_back({ observable::action::filter, callback });
-                return this;
-            }
-
-            observable& for_each (function callback) {
-                actions.push_back({ observable::action::for_each, callback });
-                return this;
-            }
-
-            void pipe (event e) {
-                for (int i = 0, int count = actions.size(); i < count; ++i) {
-                    array<any> action = actions.at(i);
-                    
-                    switch (action[ 0 ]) {
-                        case observable::action::debounce:
-                            
-                            break;
-                            
-                        case observable::action::filter:
-                            
-                            break;
-                            
-                        case observable::action::for_each:
-                            
-                            break;
-                    }
-                }
-                
-                actions.clear();
-            }
-        }
-
-        event (string name, map<string, any> details, target_type target) {
+        event (string* name, map<string, int>* data, emitter target) {
 
         }
-    }
+    };
 }

@@ -1,0 +1,6 @@
+######## VISUAL STUDIO ########
+.vs/
+fusion.sln
+fusion.vcxproj
+fusion.vcxproj.filters
+fusion.vcxproj.user
