@@ -9,17 +9,17 @@ namespace fusion::core {
 
     class event {
 
-        static class observer {
+        template <class observable_type> static class observer {
 
-            vector<function<void(event&)>> actions;
+            vector<function<void(observable_type&)>> actions;
             vector<event&> stream;
 
             observer () {
                 
             }
 
-            observer& debounce (function<void(event&, int)> callback) {
-                actions.emplace_back([ & ] (event& e) -> void {
+            observer& debounce (function<void(observable_type&, int)> callback) {
+                actions.emplace_back([ & ] (observable_type& observable) -> void {
                     for (int i = 0, count = stream.size(); i < count; ++i) {
 
                     }
@@ -28,8 +28,8 @@ namespace fusion::core {
                 return *this;
             }
 
-            observer& filter (function<bool(event&, int)> callback) {
-                actions.emplace_back([ & ] (event& e) -> void {
+            observer& filter (function<bool(observable_type&, int)> callback) {
+                actions.emplace_back([ & ] (observable_type& observable) -> void {
                     for (int i = 0, count = stream.size(); i < count; ++i) {
                         
                     }
@@ -38,18 +38,18 @@ namespace fusion::core {
                 return *this;
             }
 
-            observer& for_each (function<void(event&, int)> callback) {
-                actions.emplace_back([ & ] (event& e) -> void {
+            observer& for_each (function<void(observable_type&, int)> callback) {
+                actions.emplace_back([ & ] (observable_type& observable) -> void {
                     for (int i = 0, count = stream.size(); i < count; ++i) {
-                        callback(e, i);
+                        callback(observable, i);
                     }
                 });
 
                 return *this;
             }
 
-            template <typename return_type> observer& map (function<return_type(event&, int)> callback) {
-                actions.emplace_back([ & ] (event& e) -> void {
+            template <typename return_type> observer& map (function<return_type(observable_type&, int)> callback) {
+                actions.emplace_back([ & ] (observable_type& observable) -> void {
                     for (int i = 0, count = stream.size(); i < count; ++i) {
 
                     }
@@ -58,11 +58,11 @@ namespace fusion::core {
                 return *this;
             }
 
-            void pipe (event e) {
-                stream.emplace_back(&e);
+            void pipe (observable_type observable) {
+                stream.emplace_back(&observable);
 
                 for (int i = 0, count = actions.size(); i < count; ++i) {
-                    actions.at(i)(e);
+                    actions.at(i)(observable);
                 }
 
                 // TODO clean up memory
