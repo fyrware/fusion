@@ -4,3 +4,7 @@
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
+
+######## CLION ########
+.idea/
+cmake-build-debug/

@@ -6,5 +6,5 @@ namespace fusion::modules {
 
     class settings : public module {
     
-    }
+    };
 }

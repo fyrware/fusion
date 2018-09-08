@@ -1,3 +1,4 @@
+# include <any>
 # include <functional>
 # include <map>
 # include <string>
@@ -81,12 +82,12 @@ namespace fusion::core {
 
             }
 
-            observer subscribe (string* name) {
+            observer<event> subscribe (string* name) {
 
             }
         };
 
-        event (string* name, map<string, int>* data, emitter target) {
+        event (string* name, map<string, any>* data, emitter target) {
 
         }
     };

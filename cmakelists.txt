@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 3.12)
+project(fusion)
+
+set(CMAKE_CXX_STANDARD 17)
+
+include_directories(include)
+include_directories(include/fusion/core)
+include_directories(include/fusion/modules)
+
+add_executable(fusion
+        include/fusion/core/event
+        source/core/event.cpp
+        source/core/module.cpp
+        source/modules/settings.cpp
+        source/modules/thread_pool.cpp
+        source/main.cpp
+        test/test.cpp)
