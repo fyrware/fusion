@@ -10,13 +10,13 @@ namespace fusion::core {
 
     class event {
 
-        template <class observable_type> static class observer {
+        template <class observable_type> class observer {
 
             vector<function<void(observable_type&)>> actions;
             vector<event&> stream;
 
             observer () {
-                
+
             }
 
             observer& debounce (function<void(observable_type&, int)> callback) {
@@ -32,7 +32,7 @@ namespace fusion::core {
             observer& filter (function<bool(observable_type&, int)> callback) {
                 actions.emplace_back([ & ] (observable_type& observable) -> void {
                     for (int i = 0, count = stream.size(); i < count; ++i) {
-                        
+
                     }
                 });
 
@@ -72,13 +72,13 @@ namespace fusion::core {
             }
         };
 
-        static class emitter {
+        class emitter {
 
             emitter () {
 
             }
 
-            void emit (string* name, map<string, int>* data) {
+            void emit (string* name, map<string, int> data = { }) {
 
             }
 
