@@ -1,22 +1,41 @@
-# include <array>
+# include <map>
+# include <vector>
 # include <fusion/core/event>
+# include <fusion/core/modules>
 # include <fusion/core/plugin>
 
+using namespace std;
 using namespace fusion::core;
 
 namespace fusion::core {
 
     class application : public event::emitter {
 
-        application (array<plugin> plugins) {
+        map<string, module*> modules;
+        vector<plugin> plugins;
 
+        application (map<string, module*> modules, vector<plugin*> plugins) {
+            this->modules = modules;
+            this->plugins = plugins;
+
+            for (const auto& entry : modules) {
+                entry.second.connect(&this);
+            }
+
+            refresh();
         }
 
-        refresh (bool hard = false) {
-
+        module* module (string name) {
+            return modules.find(name)->second;
         }
 
-        start () {
+        void refresh (bool hard = false) {
+            for (plugin x : plugins) if (hard || !x.applied) {
+                x.patch(&this);
+            }
+        }
+
+        void start () {
             emit("start");
         }
     }

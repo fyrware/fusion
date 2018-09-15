@@ -8,5 +8,10 @@ namespace fusion::core {
 
     class module : public event::emitter {
 
+        &application host;
+
+        virtual void connect (application& host) {
+            this->host = host;
+        }
     };
 }
