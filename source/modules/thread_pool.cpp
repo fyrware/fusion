@@ -1,3 +1,5 @@
+# include <thread>
+# include <vector>
 # include <fusion/core/module>
 
 using namespace fusion::core;

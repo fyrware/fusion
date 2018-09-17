@@ -8,6 +8,8 @@ namespace fusion::core {
             template <class observable_type> static class observer {
 
                 public:
+                    observer ();
+
                     observer& debounce (function<void(observable_type&, int)> callback);
 
                     observer& filter (function<bool(observable_type&, int)> callback);
@@ -22,11 +24,13 @@ namespace fusion::core {
             static class emitter {
 
                 public:
+                    emitter ();
+
                     void emit (string* name, map<string, int>* data);
 
                     observer<event> subscribe (string* name);
             };
 
-            event (string* name, map<string, any>* data, emitter target);
+            event (emitter target, string* name, map<string, string> data);
     };
 }

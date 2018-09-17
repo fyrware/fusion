@@ -10,7 +10,7 @@ namespace fusion::core {
 
     class event {
 
-        template <class observable_type> static class observer {
+        template <class observable_type> class observer {
 
             vector<function<void(observable_type&)>> actions;
             vector<event&> stream;
@@ -72,7 +72,7 @@ namespace fusion::core {
             }
         };
 
-        static class emitter {
+        class emitter {
 
             emitter () {
 
@@ -87,7 +87,15 @@ namespace fusion::core {
             }
         };
 
-        event (string* name, map<string, any>* data, emitter target) {
+        string name;
+        emitter target;
+        map<string, any> data;
+
+        event (emitter target, string* name, map<string, string> data) {
+
+        }
+
+        template <typename value_type> value_type datum (const string& key) {
 
         }
     };
