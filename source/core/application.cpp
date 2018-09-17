@@ -1,7 +1,7 @@
 # include <map>
 # include <vector>
 # include <fusion/core/event>
-# include <fusion/core/modules>
+# include <fusion/core/module>
 # include <fusion/core/plugin>
 
 using namespace std;
