@@ -1,8 +1,0 @@
-namespace fusion::core {
-
-    class module {
-
-        public:
-            module ();
-    };
-}

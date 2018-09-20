@@ -3,15 +3,15 @@ project(fusion)
 
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(include)
-include_directories(include/fusion/core)
-include_directories(include/fusion/modules)
+include_directories(.)
 
 add_executable(fusion
-        include/fusion/core/event
-        source/core/event.cpp
-        source/core/module.cpp
-        source/modules/settings.cpp
-        source/modules/thread_pool.cpp
-        source/main.cpp
+        fusion/core/application.cpp
+        fusion/core/event.cpp
+        fusion/core/module.cpp
+        fusion/core/plugin.cpp
+        fusion/modules/logger.cpp
+        fusion/modules/settings.cpp
+        fusion/modules/thread_pool.cpp
+        fusion/main.cpp
         test/test.cpp)
