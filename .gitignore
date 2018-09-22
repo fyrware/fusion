@@ -1,10 +1,6 @@
-######## VISUAL STUDIO ########
-.vs/
-*.sln
-*.vcxproj
-*.vcxproj.filters
-*.vcxproj.user
-
 ######## CLION ########
 .idea/
 cmake-build-debug/
+
+######## MISC ########
+__BROKEN__/
