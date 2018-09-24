@@ -1,8 +1,11 @@
+# pragma once
+
 # include <algorithm>
 # include <any>
 # include <functional>
 # include <map>
 # include <string>
+# include <utility>
 # include <vector>
 
 using namespace std;
@@ -48,7 +51,7 @@ namespace fusion::core {
                 return this;
             }
 
-            public: template <typename return_type> observer<return_type>& map (function<return_type(observable_type, long)> callback) {
+            public: template <typename return_type> observer<return_type>* map (function<return_type(observable_type, long)> callback) {
                 actions.emplace_back([ & ] (observable_type observable) -> void {
                     for (long i = 0, count = queue.size(); i < count; ++i) {
 
