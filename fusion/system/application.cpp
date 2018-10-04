@@ -3,16 +3,19 @@
 # include <map>
 # include <vector>
 
+# include "fusion/core/emitter.cpp"
 # include "fusion/core/event.cpp"
-# include "fusion/core/module.cpp"
-# include "fusion/core/plugin.cpp"
+
+# include "fusion/system/module.cpp"
+# include "fusion/system/plugin.cpp"
 
 using namespace std;
 using namespace fusion::core;
+using namespace fusion::system;
 
-namespace fusion::core {
+namespace fusion::system {
 
-    class application : public event::emitter {
+    class application : public emitter<event> {
 
         private: map<string, module> modules;
         private: vector<plugin> plugins;
@@ -35,7 +38,15 @@ namespace fusion::core {
         }
 
         public: void start () {
-            emit("start");
+            emit("start", event("start", this));
+        }
+
+        public: void exit () {
+            emit("exit", event("exit", this));
+        }
+
+        public: void foo () {
+            emit("foo", event("foo", this));
         }
     };
 }

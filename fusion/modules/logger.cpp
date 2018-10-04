@@ -4,10 +4,10 @@
 # include <string>
 # include <utility>
 
-# include "fusion/core/module.cpp"
+# include "fusion/system/module.cpp"
 
 using namespace std;
-using namespace fusion::core;
+using namespace fusion::system;
 
 namespace fusion::modules {
 
