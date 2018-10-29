@@ -1,5 +1,4 @@
 # include <iostream>
-# include <string>
 
 # include "fusion/core/event.cpp"
 # include "fusion/system/application.cpp"
