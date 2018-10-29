@@ -4,12 +4,10 @@
 
 # include "fusion/system/application.cpp"
 
-using namespace std;
-using namespace fusion::system;
-
 namespace example {
     using std::cout;
     using std::endl;
+    using fusion::core::event;
     using fusion::system::application;
 
     void run () {
