@@ -1,0 +1,19 @@
+{
+    "dependencies": {},
+    "includes": [
+        "."
+    ],
+    "libraries": {},
+    "package": {
+        "executables": [
+            "example/main.cpp"
+        ],
+        "flags": [
+            "pthread"
+        ],
+        "name": "fusion",
+        "release": "master",
+        "repository": "https://github.com/fyrware/fusion.git ",
+        "standard": "17"
+    }
+}

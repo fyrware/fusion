@@ -6,12 +6,13 @@
 # include "fusion/core/emitter.cpp"
 # include "fusion/core/event.cpp"
 
-using namespace std;
-using namespace fusion::core;
-
 namespace fusion::system {
+    using std::map;
+    using std::string;
+    using fusion::core::emitter;
+    using fusion::core::event;
 
-class module : public emitter<event> {
+    class module : public emitter<event> {
 
         public: module () = default;
 

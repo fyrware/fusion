@@ -4,17 +4,16 @@
 
 # include "fusion/core/emitter.cpp"
 
-using namespace std;
-using namespace fusion::core;
-
 namespace fusion::core {
+    using std::string;
+    using fusion::core::emitter;
 
     class event {
 
         public: emitter<event>* source;
         public: string type;
 
-        public: event (string type, emitter<event>* source) {
+        public: event (const string& type, emitter<event>* source) {
             this->type = type;
             this->source = source;
         };

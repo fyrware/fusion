@@ -1,40 +1,43 @@
 # pragma once
 
-# include <any>
-# include <exception>
-# include <functional>
+# include <map>
 # include <string>
-# include <utility>
+# include <thread>
 # include <vector>
 
 # include "fusion/core/observable.cpp"
-
-using namespace std;
+# include "fusion/core/pool.cpp"
 
 namespace fusion::core {
+    using std::map;
+    using std::string;
+    using std::thread;
+    using std::vector;
+    using fusion::core::observable;
+    using fusion::core::pool;
 
     template <typename emission_type> class emitter {
 
-        private: map<string, vector<observable<emission_type>*>> watchers;
+        private: map<string, vector<observable<emission_type>*>> observers;
 
-        public: emitter () = default;
+        public: explicit emitter () = default;
 
-        public: observable<emission_type>* observe (string type) {
-            auto* watcher = new observable<emission_type>();
+        public: observable<emission_type>& observe (string type) {
+            auto* observer = new observable<emission_type>();
 
-            if (watchers.find(type) == watchers.end()) {
-                watchers.emplace(type, vector<observable<emission_type>*>());
+            if (observers.find(type) == observers.end()) {
+                observers.emplace(type, vector<observable<emission_type>*>());
             }
 
-            watchers.at(type).emplace_back(watcher);
+            observers.at(type).emplace_back(observer);
 
-            return watcher;
+            return *observer;
         }
 
         public: void emit (string type, emission_type emission) {
-            if (watchers.find(type) != watchers.end()) {
-                for (observable<emission_type>* watcher : watchers.at(type)) {
-                    watcher->pipe(emission);
+            if (observers.find(type) != observers.end()) {
+                for (observable<emission_type>* observer : observers.at(type)) {
+                    observer->pipe(emission);
                 }
             }
         }

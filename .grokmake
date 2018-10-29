@@ -1,0 +1,22 @@
+#                                _
+#                               //
+#       ____    ____   ____    //
+#      //  \\  //  \\ //  \\  //___
+#     //   // //     //   // //\\
+#    //   // //     //   // //  \\
+#    \\__// //      \\__// //    \\
+#       //  PACKAGE MANAGER
+#  \\__//
+
+project(fusion)
+
+set(CMAKE_CXX_STANDARD "17")
+set(CMAKE_CXX_FLAGS -pthread)
+
+add_executable(fusion example/main.cpp)
+
+# ==========: fusion :==========
+# - includes:
+include_directories("/home/nick/Projects/fyrware/fusion/.")
+# - libraries
+target_link_libraries(fusion)

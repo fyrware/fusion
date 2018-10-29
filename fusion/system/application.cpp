@@ -1,26 +1,29 @@
 # pragma once
 
 # include <map>
+# include <string>
 # include <vector>
 
 # include "fusion/core/emitter.cpp"
 # include "fusion/core/event.cpp"
-
 # include "fusion/system/module.cpp"
 # include "fusion/system/plugin.cpp"
 
-using namespace std;
-using namespace fusion::core;
-using namespace fusion::system;
-
 namespace fusion::system {
+    using std::map;
+    using std::string;
+    using std::vector;
+    using fusion::core::emitter;
+    using fusion::core::event;
+    using fusion::system::module;
+    using fusion::system::plugin;
 
     class application : public emitter<event> {
 
         private: map<string, module> modules;
         private: vector<plugin> plugins;
 
-        public: explicit application (map<string, module> modules = { }, vector<plugin> plugins = { }) {
+        public: explicit application (map<string, module> modules = { }, const vector<plugin> plugins = { }) {
             this->modules = modules;
             this->plugins = plugins;
 
@@ -33,7 +36,7 @@ namespace fusion::system {
 
         public: void refresh (bool hard = false) {
             for (auto& plugin : plugins) if (hard || plugin.applied) {
-                plugin.patch(this);
+                plugin.patch(*this);
             }
         }
 
@@ -45,8 +48,8 @@ namespace fusion::system {
             emit("exit", event("exit", this));
         }
 
-        public: void foo () {
-            emit("foo", event("foo", this));
+        public: bool is_running () {
+            return true; // TODO
         }
     };
 }

@@ -6,22 +6,23 @@
 # include "fusion/core/emitter.cpp"
 # include "fusion/core/event.cpp"
 
-using namespace std;
-using namespace fusion::core;
-
 namespace fusion::system {
+    using std::function;
+    using std::move;
+    using fusion::core::emitter;
+    using fusion::core::event;
 
     class plugin {
 
-        private: function<void(emitter<event>*)> patcher;
+        private: function<void(emitter<event>&)> patcher;
 
         public: bool applied = false;
 
-        public: plugin (function<void(emitter<event>*)> patcher) {
+        public: plugin (function<void(emitter<event>&)> patcher) {
             this->patcher = move(patcher);
         }
 
-        public: void patch (emitter<event>* application) {
+        public: void patch (emitter<event>& application) {
             patcher(application);
             applied = true;
         }

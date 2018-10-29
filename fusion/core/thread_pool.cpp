@@ -8,9 +8,17 @@
 # include <thread>
 # include <utility>
 
-using namespace std;
-
 namespace fusion::core {
+    using std::function;
+    using std::map;
+    using std::queue;
+    using std::shared_mutex;
+    using std::thread;
+    using std::unique_lock;
+
+    namespace {
+        namespace this_thread = std::this_thread;
+    }
 
     class thread_pool {
 
@@ -19,7 +27,7 @@ namespace fusion::core {
         private: map<thread::id, thread> workers;
         private: queue<function<void()>> actions;
 
-        public: explicit thread_pool (int size = 2) {
+        public: explicit thread_pool (int size = 1) {
             resize(size);
         }
 
@@ -27,38 +35,41 @@ namespace fusion::core {
             if (this->size > size) {
                 // remove X threads until right size
             }
-            else {
-                while (workers.size() < size) {
-                    thread process = thread([ & ] () -> void {
-                        function<void()> action = nullptr;
+            else while (workers.size() < size) {
+                thread worker([ & ] () -> void {
+                    function<void()> action = nullptr;
 
-                        while (workers.find(this_thread::get_id()) != workers.end()) {
-                            {
-                                auto lock = unique_lock<shared_mutex>(pool_mutex);
+                    while (workers.find(this_thread::get_id()) != workers.end()) {
+                        {
+                            auto lock = unique_lock<shared_mutex>(pool_mutex);
 
-                                if (actions.size() > 0) {
-                                    action = actions.front();
-                                    actions.pop();
-                                }
-
-                                lock.unlock();
+                            if (actions.size() > 0) {
+                                action = actions.front();
+                                actions.pop();
                             }
-                            if (action != nullptr) {
-                                action();
-                                action = nullptr;
-                            }
+
+                            lock.unlock();
                         }
-                    });
+                        if (action != nullptr) {
+                            action();
+                            action = nullptr;
+                        }
+                    }
+                });
 
-                    workers.emplace(process.get_id(), move(process));
-                }
+                workers.emplace(worker.get_id(), move(worker));
             }
 
             this->size = size;
         }
 
         public: void run (function<void()> callback) {
-            actions.push(move(callback));
+            if (this->size == 0) {
+                move(callback)();
+            }
+            else {
+                actions.push(move(callback));
+            }
         }
     };
 }

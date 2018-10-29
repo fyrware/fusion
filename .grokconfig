@@ -1,7 +1,0 @@
-[ package ]
-name = fusion
-version = 0.0.0-alpha.1
-author = Nick Dugger
-license = MIT
-
-[ dependencies ]
