@@ -31,7 +31,7 @@ namespace fusion::core {
 
             observers.at(type).emplace_back(observer);
 
-            return *observer;
+            return *observer; // TODO cleanup mem
         }
 
         public: void emit (string type, emission_type emission) {

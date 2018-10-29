@@ -20,11 +20,15 @@ namespace fusion::core {
         private: int size;
         private: map<string, fill_type> contents;
 
-        public: explicit pool (int size = 1) {
+        public: explicit pool (int size = 1) : size(0) {
             resize(size);
         }
 
         public: void resize (int size) {
+
+        }
+
+        public: void drain () {
 
         }
     };
