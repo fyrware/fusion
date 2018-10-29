@@ -20,8 +20,8 @@ namespace fusion::core {
 
         public: explicit observable (int size = 0) { }
 
-        public: observable (function<void(observable*)> observer) {
-            observer(this);
+        public: observable (function<void(observable&)> observer) {
+            observer(*this);
         }
 
         public: template <typename cast_type> observable<cast_type>& cast () {
