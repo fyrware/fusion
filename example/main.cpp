@@ -1,6 +1,7 @@
 # include <iostream>
 
 # include "fusion/core/event.cpp"
+# include "fusion/core/executor.cpp"
 # include "fusion/system/application.cpp"
 
 namespace example {
