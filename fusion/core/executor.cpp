@@ -22,21 +22,22 @@ namespace fusion::core {
     class executor {
 
         private:
-            queue<function<void()>> actions;
+            queue<function<void()>> executor_actions;
+            int executor_concurrency;
             mutable shared_mutex executor_mutex;
-            pool<thread> thread_pool;
+            pool<thread> executor_thread_pool;
 
         public:
-            explicit executor (int concurrency) : thread_pool(concurrency, [ & ] () -> thread {
+            explicit executor (int concurrency = 0) : executor_thread_pool(concurrency, [ & ] () -> thread {
                 return thread([ & ] () {
                     function<void()> action = nullptr;
 
                     while (true) {
                         unique_lock<shared_mutex> guard(executor_mutex);
 
-                        if (!actions.empty()) {
-                            action = actions.front();
-                            actions.pop();
+                        if (!executor_actions.empty()) {
+                            action = executor_actions.front();
+                            executor_actions.pop();
                         }
 
                         guard.unlock();
@@ -48,11 +49,16 @@ namespace fusion::core {
                     }
                 });
             }) {
-                // thanks, c++ for this *lovely* syntax...
+                executor_concurrency = concurrency;
             }
 
             void run (const function<void()>& action) {
-                actions.push(action);
+                if (executor_concurrency == 0) {
+                    action();
+                }
+                else {
+                    executor_actions.push(action);
+                }
             }
     };
 }

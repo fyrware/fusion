@@ -6,15 +6,12 @@
 # include <vector>
 
 # include "fusion/core/observable.cpp"
-# include "fusion/core/pool.cpp"
 
 namespace fusion::core {
     using std::map;
     using std::string;
     using std::thread;
     using std::vector;
-    using fusion::core::observable;
-    using fusion::core::pool;
 
     template <typename emission_type> class emitter {
 

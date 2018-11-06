@@ -17,14 +17,17 @@ namespace fusion::core {
     template <typename observation_type> class observable {
 
         private:
-            vector<function<void()>> actions;
-            vector<function<void(exception)>> catches;
-            vector<observation_type> observations;
+            vector<function<void()>> observable_actions;
+            vector<function<void(exception)>> observable_catches;
+            vector<observation_type> observable_observations;
+
+            executor observable_observation_executor;
+            executor observable_subscription_executor;
 
         public:
-            explicit observable (int size = 0) { }
+            observable () = default;
 
-            public: observable (function<void(observable&)> observer) {
+            observable (function<void(observable&)> observer) {
                 observer(*this);
             }
 
@@ -32,9 +35,21 @@ namespace fusion::core {
 
             }
 
+            observable<observation_type>& observe_concurrently (executor observation_executor) {
+                observable_observation_executor = observation_executor;
+
+                return *this;
+            }
+
+            observable<observation_type>& subscribe_concurrently (executor subscription_executor) {
+                observable_subscription_executor = subscription_executor;
+
+                return *this;
+            }
+
             observable<observation_type>& for_each (function<void(observation_type)> callback) {
-                actions.emplace_back([ this, callback ] () {
-                    for (observation_type observation : observations) {
+                observable_actions.emplace_back([ this, callback ] () {
+                    for (observation_type observation : observable_observations) {
                         callback(observation);
                     }
                 });
@@ -42,26 +57,26 @@ namespace fusion::core {
                 return *this;
             }
 
+            void pipe (observation_type observation) {
+                observable_observations.emplace_back(observation);
+
+                for (function<void()>& action : observable_actions) {
+                    action();
+                }
+
+                observable_observations.clear();
+            }
+
             observable<observation_type>& catch_exception (function<void(exception)> callback) {
-                catches.emplace_back(callback);
+                observable_catches.emplace_back(callback);
 
                 return *this;
             }
 
             void throw_exception (exception thrown) {
-                for (auto& caught : catches) {
+                for (function<void(exception)>& caught : observable_catches) {
                     caught(thrown);
                 }
-            }
-
-            void pipe (observation_type observation) {
-                observations.emplace_back(observation);
-
-                for (auto& action : actions) {
-                    action();
-                }
-
-                observations.clear();
             }
     };
 }

@@ -41,11 +41,11 @@ namespace fusion::system {
         }
 
         public: void start () {
-            emit("start", event("start", this));
+            emit("start", event("start"));
         }
 
         public: void exit () {
-            emit("exit", event("exit", this));
+            emit("exit", event("exit"));
         }
 
         public: bool is_running () {
