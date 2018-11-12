@@ -3,12 +3,14 @@
 # include <map>
 # include <string>
 # include <thread>
+# include <utility>
 # include <vector>
 
 # include "fusion/core/observable.cpp"
 
 namespace fusion::core {
     using std::map;
+    using std::pair;
     using std::string;
     using std::thread;
     using std::vector;
@@ -22,8 +24,14 @@ namespace fusion::core {
             explicit emitter () = default;
 
             ~ emitter () {
-                for (observable<emission_type>* o : emitter_observers) {
-                    delete o;
+                for (pair p : emitter_observers) {
+                    vector<observable<emission_type>*> observers = p.second;
+
+                    for (observable<emission_type>* o : observers) {
+                        delete o;
+                    }
+
+                    observers.clear();
                 }
 
                 emitter_observers.clear();
