@@ -12,6 +12,7 @@
 
 namespace fusion::system {
     using std::map;
+    using std::move;
     using std::pair;
     using std::string;
     using std::vector;
@@ -28,16 +29,27 @@ namespace fusion::system {
             bool application_running;
 
         public:
-            explicit application (const map<string, module> modules = { }, const vector<plugin> plugins = { }) {
-                application_modules = modules;
+            explicit application (const vector<module> modules = { }, const vector<plugin> plugins = { }) {
                 application_plugins = plugins;
                 application_running = false;
 
-                for (pair p : modules) {
-                    p.second.connect(modules);
+                for (module m : modules) {
+                   application_modules.emplace(m.name(), move(m));
+                }
+
+                for (pair p : application_modules) {
+                    p.second.connect(application_modules);
                 }
 
                 refresh();
+            }
+
+            bool running () {
+                return application_running;
+            }
+
+            map<string, module> modules () {
+                return application_modules;
             }
 
             void refresh (const bool hard = false) {
@@ -56,10 +68,6 @@ namespace fusion::system {
                 application_running = false;
 
                 emit("exit", event("exit"));
-            }
-
-            bool running () {
-                return application_running;
             }
     };
 }
