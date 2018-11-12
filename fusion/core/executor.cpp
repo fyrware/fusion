@@ -23,12 +23,12 @@ namespace fusion::core {
 
         private:
             queue<function<void()>> executor_actions;
-            int executor_concurrency;
-            mutable shared_mutex executor_mutex;
+            shared_mutex executor_mutex;
+            int executor_thread_count;
             pool<thread> executor_thread_pool;
 
         public:
-            explicit executor (int concurrency = 0) : executor_thread_pool(concurrency, [ & ] () -> thread {
+            explicit executor (int thread_count = 0) : executor_thread_pool(thread_count, [ & ] () -> thread {
                 return thread([ & ] () {
                     function<void()> action = nullptr;
 
@@ -49,11 +49,11 @@ namespace fusion::core {
                     }
                 });
             }) {
-                executor_concurrency = concurrency;
+                executor_thread_count = thread_count;
             }
 
             void run (const function<void()>& action) {
-                if (executor_concurrency == 0) {
+                if (executor_thread_count == 0) {
                     action();
                 }
                 else {

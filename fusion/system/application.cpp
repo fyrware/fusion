@@ -48,7 +48,7 @@ namespace fusion::system {
             emit("exit", event("exit"));
         }
 
-        public: bool is_running () {
+        public: bool running () {
             return true; // TODO
         }
     };

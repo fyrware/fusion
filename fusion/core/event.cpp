@@ -8,10 +8,12 @@ namespace fusion::core {
     class event {
 
         public:
-            string type;
+            string event_type;
+            int event_i;
 
-            explicit event (const string& type) {
-                this->type = type;
+            explicit event (const string& type, int i = 0) {
+                event_type = type;
+                event_i = i;
             };
     };
 }
