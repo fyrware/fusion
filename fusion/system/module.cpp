@@ -18,7 +18,7 @@ namespace fusion::system {
             string module_name;
 
         public:
-            explicit module (const string& name) {
+            explicit module (string name) {
                 module_name = name;
             };
 
