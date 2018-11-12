@@ -14,17 +14,23 @@ namespace fusion::system {
 
     class plugin {
 
-        private: function<void(emitter<event>&)> patcher;
+        private:
+            bool plugin_applied;
+            function<void(emitter<event>&)> plugin_patcher;
 
-        public: bool applied = false;
+        public:
+            explicit plugin (function<void(emitter<event>&)> patcher) {
+                plugin_applied = false;
+                plugin_patcher = move(patcher);
+            }
 
-        public: plugin (function<void(emitter<event>&)> patcher) {
-            this->patcher = move(patcher);
-        }
+            void patch (emitter<event>& application) {
+                plugin_patcher(application);
+                plugin_applied = true;
+            }
 
-        public: void patch (emitter<event>& application) {
-            patcher(application);
-            applied = true;
-        }
+            bool applied () {
+                return plugin_applied;
+            }
     };
 }

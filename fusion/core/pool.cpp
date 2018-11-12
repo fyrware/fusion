@@ -20,14 +20,14 @@ namespace fusion::core {
             int pool_size;
 
         public:
-            pool (int size, function<fill_type()> allocator) {
+            pool (const int size, const function<fill_type()> allocator) {
                 pool_content_allocator = allocator;
                 pool_size = 0;
 
                 resize(size);
             }
 
-            void resize (int size) {
+            void resize (const int size) {
                 if (pool_size > size) while (pool_contents.size() > size) {
                     pool_contents.pop_back();
                 }

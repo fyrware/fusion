@@ -14,10 +14,11 @@ namespace fusion::system {
 
     class module : public emitter<event> {
 
-        public: module () = default;
+        public:
+            module () = default;
 
-        public: virtual void connect (map<string, module>& registry) {
+            virtual void connect (const map<string, module>& registry) {
 
-        }
+            }
     };
 }

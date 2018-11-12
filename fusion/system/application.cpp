@@ -2,6 +2,7 @@
 
 # include <map>
 # include <string>
+# include <utility>
 # include <vector>
 
 # include "fusion/core/emitter.cpp"
@@ -11,6 +12,7 @@
 
 namespace fusion::system {
     using std::map;
+    using std::pair;
     using std::string;
     using std::vector;
     using fusion::core::emitter;
@@ -20,36 +22,44 @@ namespace fusion::system {
 
     class application : public emitter<event> {
 
-        private: map<string, module> modules;
-        private: vector<plugin> plugins;
+        private:
+            map<string, module> application_modules;
+            vector<plugin> application_plugins;
+            bool application_running;
 
-        public: explicit application (map<string, module> modules = { }, const vector<plugin> plugins = { }) {
-            this->modules = modules;
-            this->plugins = plugins;
+        public:
+            explicit application (const map<string, module> modules = { }, const vector<plugin> plugins = { }) {
+                application_modules = modules;
+                application_plugins = plugins;
+                application_running = false;
 
-            for (auto& pair : modules) {
-                pair.second.connect(modules);
+                for (pair p : modules) {
+                    p.second.connect(modules);
+                }
+
+                refresh();
             }
 
-            refresh();
-        }
-
-        public: void refresh (bool hard = false) {
-            for (auto& plugin : plugins) if (hard || plugin.applied) {
-                plugin.patch(*this);
+            void refresh (const bool hard = false) {
+                for (plugin p : application_plugins) if (hard || !p.applied()) {
+                    p.patch(*this);
+                }
             }
-        }
 
-        public: void start () {
-            emit("start", event("start"));
-        }
+            void start () {
+                application_running = true;
 
-        public: void exit () {
-            emit("exit", event("exit"));
-        }
+                emit("start", event("start"));
+            }
 
-        public: bool running () {
-            return true; // TODO
-        }
+            void exit () {
+                application_running = false;
+
+                emit("exit", event("exit"));
+            }
+
+            bool running () {
+                return application_running;
+            }
     };
 }

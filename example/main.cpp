@@ -18,7 +18,7 @@ namespace example {
 
         cout << "main thread: " << std::this_thread::get_id() << endl;
 
-        app.observe("start").use_executor(exe).for_each([] (event e) {
+        app.observe("start").use_executor(exe).for_each([] (const event e) {
             cout << "application has started: " << std::this_thread::get_id() << endl;
         });
 

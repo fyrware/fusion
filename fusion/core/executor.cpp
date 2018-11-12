@@ -28,7 +28,7 @@ namespace fusion::core {
             pool<thread> executor_thread_pool;
 
         public:
-            explicit executor (int thread_count = 0) : executor_thread_pool(thread_count, [ & ] () -> thread {
+            explicit executor (const int thread_count = 0) : executor_thread_pool(thread_count, [ & ] () -> thread {
                 return thread([ & ] () {
                     function<void()> action = nullptr;
 

@@ -9,11 +9,9 @@ namespace fusion::core {
 
         public:
             string event_type;
-            int event_i;
 
-            explicit event (const string& type, int i = 0) {
+            explicit event (const string& type) {
                 event_type = type;
-                event_i = i;
             };
     };
 }
