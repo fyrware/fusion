@@ -16,26 +16,34 @@ namespace fusion::core {
     template <typename emission_type> class emitter {
 
         private:
-            map<string, vector<observable<emission_type>*>> observers;
+            map<string, vector<observable<emission_type>*>> emitter_observers;
 
         public:
             explicit emitter () = default;
 
+            ~ emitter () {
+                for (observable<emission_type>* o : emitter_observers) {
+                    delete o;
+                }
+
+                emitter_observers.clear();
+            }
+
             observable<emission_type>& observe (const string& type) {
                 auto* observer = new observable<emission_type>();
 
-                if (observers.find(type) == observers.end()) {
-                    observers.emplace(type, vector<observable<emission_type>*>());
+                if (emitter_observers.find(type) == emitter_observers.end()) {
+                    emitter_observers.emplace(type, vector<observable<emission_type>*>());
                 }
 
-                observers.at(type).emplace_back(observer);
+                emitter_observers.at(type).emplace_back(observer);
 
                 return *observer; // TODO cleanup mem
             }
 
             void emit (const string& type, const emission_type emission) {
-                if (observers.find(type) != observers.end()) {
-                    for (observable<emission_type>* observer : observers.at(type)) {
+                if (emitter_observers.find(type) != emitter_observers.end()) {
+                    for (observable<emission_type>* observer : emitter_observers.at(type)) {
                         observer->pipe(emission);
                     }
                 }
