@@ -14,21 +14,8 @@ namespace fusion::system {
 
     class module : public emitter<event> {
 
-        private:
-            string module_name;
-
         public:
-            explicit module (string name) {
-                module_name = name;
-            };
-
-            explicit module (const char* name) {
-                module_name = name;
-            };
-
-            string name () {
-                return module_name;
-            }
+            module () = default;
 
             virtual void connect (const map<string, module>& registry) {
 

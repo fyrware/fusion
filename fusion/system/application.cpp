@@ -29,13 +29,10 @@ namespace fusion::system {
             bool application_running;
 
         public:
-            explicit application (const vector<module> modules = { }, const vector<plugin> plugins = { }) {
+            explicit application (const map<string, module>& modules = { }, const vector<plugin>& plugins = { }) {
+                application_modules = modules;
                 application_plugins = plugins;
                 application_running = false;
-
-                for (module m : modules) {
-                   application_modules.emplace(m.name(), move(m));
-                }
 
                 for (pair p : application_modules) {
                     p.second.connect(application_modules);
