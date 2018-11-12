@@ -22,6 +22,10 @@ namespace fusion::system {
                 module_name = name;
             };
 
+            explicit module (const char* name) {
+                module_name = name;
+            };
+
             string name () {
                 return module_name;
             }
