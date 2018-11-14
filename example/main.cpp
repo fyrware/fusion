@@ -1,29 +1,22 @@
 # include <iostream>
-# include <thread>
 
-# include "fusion/core/event.cpp"
-# include "fusion/core/executor.cpp"
+# include "fusion/entities/message.cpp"
 # include "fusion/system/application.cpp"
 
 namespace example {
-    using std::cout;
-    using std::endl;
-    using fusion::core::event;
-    using fusion::core::executor;
+    using fusion::entities::message;
     using fusion::system::application;
 
     void run () {
         application app;
-        executor exe(1);
 
-        cout << "main thread: " << std::this_thread::get_id() << endl;
-
-        app.observe("start").use_executor(exe).for_each([] (const event e) {
-            cout << "application has started: " << std::this_thread::get_id() << endl;
+        app.subscribe("application").observe().for_each([] (message m) {
+            std::cout << m.content() << std::endl;
         });
 
-        app.start();
+        app.publish("application", "start", message("application has started"));
 
+        app.start();
         while (app.running());
     }
 }

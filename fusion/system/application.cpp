@@ -5,8 +5,8 @@
 # include <utility>
 # include <vector>
 
-# include "fusion/core/emitter.cpp"
-# include "fusion/core/event.cpp"
+# include "fusion/core/broker.cpp"
+# include "fusion/entities/message.cpp"
 # include "fusion/system/module.cpp"
 # include "fusion/system/plugin.cpp"
 
@@ -16,12 +16,10 @@ namespace fusion::system {
     using std::pair;
     using std::string;
     using std::vector;
-    using fusion::core::emitter;
-    using fusion::core::event;
-    using fusion::system::module;
-    using fusion::system::plugin;
+    using fusion::core::broker;
+    using fusion::entities::message;
 
-    class application : public emitter<event> {
+    class application : public broker<message> {
 
         private:
             map<string, module> application_modules;
@@ -35,7 +33,7 @@ namespace fusion::system {
                 application_running = false;
 
                 for (pair p : application_modules) {
-                    p.second.connect(application_modules);
+                    p.second.connect(*this);
                 }
 
                 refresh();
@@ -43,10 +41,6 @@ namespace fusion::system {
 
             bool running () {
                 return application_running;
-            }
-
-            map<string, module> modules () {
-                return application_modules;
             }
 
             void refresh (const bool hard = false) {
@@ -57,14 +51,10 @@ namespace fusion::system {
 
             void start () {
                 application_running = true;
-
-                emit("start", event("start"));
             }
 
             void exit () {
                 application_running = false;
-
-                emit("exit", event("exit"));
             }
     };
 }

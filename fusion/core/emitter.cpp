@@ -15,13 +15,17 @@ namespace fusion::core {
     using std::thread;
     using std::vector;
 
+    const string EMITTER_OBSERVE_ALL;
+
     template <typename emission_type> class emitter {
 
         private:
             map<string, vector<observable<emission_type>*>> emitter_observers;
 
         public:
-            explicit emitter () = default;
+            explicit emitter () {
+                emitter_observers.emplace(EMITTER_OBSERVE_ALL, vector<observable<emission_type>*>());
+            };
 
             ~ emitter () {
                 for (pair p : emitter_observers) {
@@ -37,21 +41,27 @@ namespace fusion::core {
                 emitter_observers.clear();
             }
 
-            observable<emission_type>& observe (const string& type) {
+            observable<emission_type>& observe (const string& name = EMITTER_OBSERVE_ALL) {
                 auto* observer = new observable<emission_type>();
 
-                if (emitter_observers.find(type) == emitter_observers.end()) {
-                    emitter_observers.emplace(type, vector<observable<emission_type>*>());
+                if (emitter_observers.find(name) == emitter_observers.end()) {
+                    emitter_observers.emplace(name, vector<observable<emission_type>*>());
                 }
 
-                emitter_observers.at(type).emplace_back(observer);
+                emitter_observers.at(name).emplace_back(observer);
 
-                return *observer; // TODO cleanup mem
+                return *observer;
             }
 
-            void emit (const string& type, const emission_type emission) {
-                if (emitter_observers.find(type) != emitter_observers.end()) {
-                    for (observable<emission_type>* observer : emitter_observers.at(type)) {
+            void emit (const string& name, const emission_type emission) {
+                if (emitter_observers.find(name) != emitter_observers.end()) {
+                    for (observable<emission_type>* observer : emitter_observers.at(name)) {
+                        observer->pipe(emission);
+                    }
+                }
+
+                if (name != EMITTER_OBSERVE_ALL) {
+                    for (observable<emission_type>* observer : emitter_observers.at(EMITTER_OBSERVE_ALL)) {
                         observer->pipe(emission);
                     }
                 }
