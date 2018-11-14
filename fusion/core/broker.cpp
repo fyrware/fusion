@@ -50,7 +50,7 @@ namespace fusion::core {
                 return *subscriber;
             }
 
-            void publish (const string& topic, const string& description, brokerage_type payload) {
+            void publish (const string& topic, const string& description, brokerage_type payload = brokerage_type()) {
                 if (broker_subscribers.find(topic) != broker_subscribers.end()) {
 
                     for (emitter<brokerage_type>* subscriber : broker_subscribers.at(topic)) {

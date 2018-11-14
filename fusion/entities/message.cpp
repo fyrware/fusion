@@ -10,15 +10,15 @@ namespace fusion::entities {
     using std::map;
     using std::string;
 
-    const string MESSAGE_EMPTY;
-
     class message {
 
         private:
             string message_content;
 
         public:
-            explicit message (const string& content = MESSAGE_EMPTY) {
+            message () = default;
+
+            explicit message (const string& content) {
                 message_content = content;
             }
 

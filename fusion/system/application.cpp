@@ -51,10 +51,12 @@ namespace fusion::system {
 
             void start () {
                 application_running = true;
+                publish("application", "start");
             }
 
             void exit () {
                 application_running = false;
+                publish("application", "exit");
             }
     };
 }

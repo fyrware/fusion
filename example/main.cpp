@@ -14,8 +14,6 @@ namespace example {
             std::cout << m.content() << std::endl;
         });
 
-        app.publish("application", "start", message("application has started"));
-
         app.start();
         while (app.running());
     }
