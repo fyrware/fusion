@@ -8,9 +8,9 @@
 # include <thread>
 # include <vector>
 
-# include "fusion/core/pool.cpp"
+# include "fusion/pool.cpp"
 
-namespace fusion::core {
+namespace fusion {
     using std::function;
     using std::queue;
     using std::shared_mutex;

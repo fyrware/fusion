@@ -4,9 +4,9 @@
 # include <functional>
 # include <vector>
 
-# include "fusion/core/executor.cpp"
+# include "fusion/executor.cpp"
 
-namespace fusion::core {
+namespace fusion {
     using std::exception;
     using std::function;
     using std::vector;

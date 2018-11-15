@@ -6,7 +6,7 @@
 # include <string>
 # include <vector>
 
-namespace fusion::core {
+namespace fusion {
     using std::function;
     using std::queue;
     using std::string;

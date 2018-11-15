@@ -1,21 +1,18 @@
 # include <iostream>
 
-# include "fusion/entities/message.cpp"
-# include "fusion/system/application.cpp"
+# include "fusion/program.cpp"
 
 namespace example {
-    using fusion::entities::message;
-    using fusion::system::application;
 
     void run () {
-        application app;
+        fusion::program example;
 
-        app.subscribe("application").observe().for_each([] (message m) {
-            std::cout << m.content() << std::endl;
+        example.subscribe("program").observe("start").for_each([] (int x) {
+            std::cout << x << std::endl;
         });
 
-        app.start();
-        while (app.running());
+        example.start();
+        while (example.running());
     }
 }
 

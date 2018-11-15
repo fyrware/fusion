@@ -6,9 +6,9 @@
 # include <utility>
 # include <vector>
 
-# include "fusion/core/observable.cpp"
+# include "fusion/observable.cpp"
 
-namespace fusion::core {
+namespace fusion {
     using std::map;
     using std::pair;
     using std::string;

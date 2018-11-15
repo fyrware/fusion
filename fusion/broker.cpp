@@ -7,10 +7,10 @@
 # include <vector>
 # include <utility>
 
-# include "fusion/core/emitter.cpp"
-# include "fusion/core/observable.cpp"
+# include "fusion/emitter.cpp"
+# include "fusion/observable.cpp"
 
-namespace fusion::core {
+namespace fusion {
     using std::any;
     using std::find;
     using std::map;
