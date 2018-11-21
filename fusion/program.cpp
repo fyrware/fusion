@@ -6,15 +6,11 @@
 # include <utility>
 
 # include "fusion/broker.cpp"
+# include "fusion/instruction.cpp"
 
 namespace fusion {
 
-    namespace {
-        using std::is_function;
-        int foo = 5;
-    }
-
-    class program : public broker<int> {
+    class program : public broker<instruction> {
 
         private:
             bool program_running = false;
@@ -32,11 +28,12 @@ namespace fusion {
 
             void start () {
                 program_running = true;
-                publish("program", "start", 0);
+                publish("program", "start", instruction("program::start"));
             }
 
             void exit () {
                 program_running = false;
+                publish("program", "exit", instruction("program::exit"));
             }
     };
 }

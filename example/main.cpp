@@ -7,8 +7,8 @@ namespace example {
     void run () {
         fusion::program example;
 
-        example.subscribe("program").observe("start").for_each([] (int x) {
-            std::cout << x << std::endl;
+        example.subscribe("program").observe("start").for_each([] (fusion::instruction x) {
+            std::cout << x.name() << std::endl;
         });
 
         example.start();
