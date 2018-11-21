@@ -16,9 +16,9 @@ namespace fusion {
             bool program_running = false;
 
         public:
-            explicit program (const std::vector<std::function<void(program&)>>& components = { }) {
-                for (const std::function<void(program&)>& component : components) {
-                    component(*this);
+            explicit program (const std::vector<std::function<void(program&)>>& plugins = { }) {
+                for (const std::function<void(program&)>& plugin : plugins) {
+                    plugin(*this);
                 }
             }
 
