@@ -3,4 +3,4 @@
 </p>
 
 # fusion
-Event Driven Application Scaffolding
+High-Level Observable-Based Application Scaffolding
