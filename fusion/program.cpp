@@ -1,5 +1,6 @@
 # pragma once
 
+# include <variant>
 # include <functional>
 # include <map>
 # include <vector>
@@ -10,10 +11,11 @@
 
 namespace fusion {
 
-    class program : public broker<instruction> {
+    template <typename instruction_type> class program : public broker<instruction<instruction_type>> {
 
         private:
             bool program_running = false;
+            int program_status = 0;
 
         public:
             explicit program (const std::vector<std::function<void(program&)>>& plugins = { }) {
@@ -26,14 +28,21 @@ namespace fusion {
                 return program_running;
             }
 
-            void start () {
-                program_running = true;
-                publish("program", "start", instruction("program::start"));
+            int status () {
+                return program_status;
             }
 
-            void exit () {
+            void start () {
+                program_running = true;
+
+                this->publish("program", "start", instruction("program::start", instruction_type()));
+            }
+
+            void exit (const int status = 0) {
                 program_running = false;
-                publish("program", "exit", instruction("program::exit"));
+                program_status = status;
+
+                this->publish("program", "exit", instruction("program::exit", instruction_type()));
             }
     };
 }
