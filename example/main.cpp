@@ -1,24 +1,14 @@
 # include <iostream>
+# include <map>
+# include <memory>
+# include <string>
 
-# include "fusion/program.cpp"
+# include "fusion/broker.cpp"
 
 namespace example {
 
     int run () {
-        fusion::program<int> example;
 
-        example.subscribe("foo").observe("bar").for_each([ & ] (fusion::instruction<int> x) {
-            example.exit(x.details());
-        });
-
-        example.subscribe("program").observe("start").for_each([ & ] (fusion::instruction<int> x) {
-            example.publish("foo", "bar", fusion::instruction<int>("foo::bar", 0));
-        });
-
-        example.start();
-
-        while (example.running());
-        return example.status();
     }
 }
 
