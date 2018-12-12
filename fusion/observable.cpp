@@ -31,9 +31,9 @@ namespace fusion {
                 return *this;
             }
 
-            observable<observation_type>& for_each (const function<void(observation_type)> callback) {
+            observable<observation_type>& for_each (const function<void(observation_type&)> callback) {
                 observable_actions.emplace_back([ this, callback ] () {
-                    for (const observation_type& observation : observable_observations) {
+                    for (observation_type& observation : observable_observations) {
                         callback(observation);
                     }
                 });
@@ -41,7 +41,7 @@ namespace fusion {
                 return *this;
             }
 
-            void pipe (const observation_type observation) {
+            void pipe (observation_type observation) {
                 observable_executor->run([ this, observation ] () {
                     observable_observations.emplace_back(observation);
 
