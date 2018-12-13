@@ -8,9 +8,6 @@
 # include "fusion/executor.cpp"
 
 namespace fusion {
-    using std::exception;
-    using std::function;
-    using std::vector;
 
     namespace {
         executor default_observable_executor(0);
@@ -19,16 +16,18 @@ namespace fusion {
     template <typename observation_type> class observable {
 
         private:
-            vector<function<void()>> observable_actions;
+            std::vector<function<void()>> observable_actions;
             executor* observable_executor;
-            vector<observation_type> observable_observations;
-            void* observable_casted;
+            std::vector<observation_type> observable_observations;
+            std::vector<void*> observable_casted_observables;
 
         public:
             observable () : observable_executor(&default_observable_executor) { };
 
             ~ observable () {
-                delete observable_casted;
+                for (void* casted_observable : observable_casted_observables) {
+                    delete static_cast<observable<observation_type>*>(casted_observable);
+                }
             }
 
             observable<observation_type>& use_executor (executor& executor_to_use) {
@@ -40,8 +39,7 @@ namespace fusion {
             template <typename cast_type> observable<cast_type>& cast () {
                 observable<cast_type>* new_observable = new observable<cast_type>();
 
-                observable_casted = new_observable;
-
+                observable_casted_observables.emplace_back(new_observable);
                 observable_actions.emplace_back([ this, new_observable ] () {
                     for (observation_type& observation : observable_observations) {
                         new_observable->pipe(static_cast<cast_type>(observation));
