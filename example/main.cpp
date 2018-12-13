@@ -48,23 +48,16 @@ namespace example {
     int run () {
         fusion::emitter<foo*> foo_emitter;
 
-        foo_emitter.observe("1").for_each([] (foo* x) {
-            x->log();
-            std::cout << x->name() << std::endl;
-            x->log();
+        foo_emitter.observe("hello").for_each([] (foo* x) {
+
         });
 
-        foo_emitter.observe("2").for_each([] (foo* x) {
-            x->log();
+        foo_emitter.observe("world").cast<bar*>().for_each([] (bar* x) {
 
-            bar* y = static_cast<bar*>(x);
-
-            std::cout << y->size() << std::endl;
-            y->log();
         });
 
-        foo_emitter.emit("1", new foo("your mom"));
-        foo_emitter.emit("2", new bar("ugh", 5));
+        foo_emitter.emit("hello", new foo("your mom"));
+        foo_emitter.emit("world", new bar("asdf", 69));
 
         return 0;
     }
