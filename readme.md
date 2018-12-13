@@ -3,4 +3,4 @@
 </p>
 
 # fusion
-High-Level Observable-Based Application Scaffolding
+High Level Multi-Threaded Observable Library
