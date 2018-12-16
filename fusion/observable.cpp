@@ -3,15 +3,14 @@
 # include <exception>
 # include <functional>
 # include <memory>
+# include <type_traits>
 # include <vector>
 
 # include "fusion/executor.cpp"
 
 namespace fusion {
 
-    namespace {
-        executor default_observable_executor(0);
-    }
+    executor DEFAULT_OBSERVABLE_EXECUTOR(0);
 
     template <typename observation_type> class observable {
 
@@ -22,7 +21,7 @@ namespace fusion {
             std::vector<void*> observable_casted_observables;
 
         public:
-            observable () : observable_executor(&default_observable_executor) { };
+            observable () : observable_executor(&DEFAULT_OBSERVABLE_EXECUTOR) { };
 
             ~ observable () {
                 for (void* casted_observable : observable_casted_observables) {
@@ -36,13 +35,18 @@ namespace fusion {
                 return *this;
             }
 
-            template <typename cast_type> observable<cast_type>& cast () {
+            template <typename cast_type> observable<cast_type>& cast (bool dynamic = false) {
                 observable<cast_type>* new_observable = new observable<cast_type>();
 
                 observable_casted_observables.emplace_back(new_observable);
-                observable_actions.emplace_back([ this, new_observable ] () {
+                observable_actions.emplace_back([ this, dynamic, new_observable ] () {
                     for (observation_type& observation : observable_observations) {
-                        new_observable->pipe(static_cast<cast_type>(observation));
+                        if (dynamic) {
+                            new_observable->pipe(dynamic_cast<cast_type>(observation));
+                        }
+                        else {
+                            new_observable->pipe(static_cast<cast_type>(observation));
+                        }
                     }
                 });
 
@@ -65,6 +69,12 @@ namespace fusion {
 
                     for (const function<void()>& action : observable_actions) {
                         action();
+                    }
+
+                    if (std::is_pointer<observation_type>::value) {
+                        for (observation_type observation : observable_observations) {
+                            delete observation;
+                        }
                     }
 
                     observable_observations.clear();
