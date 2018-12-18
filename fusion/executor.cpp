@@ -17,6 +17,7 @@ namespace fusion {
         private:
             std::queue<std::function<void()>> executor_actions;
             std::shared_mutex executor_mutex;
+            bool executor_interrupted;
             int executor_thread_count;
             pool<std::thread> executor_thread_pool;
 
@@ -25,7 +26,7 @@ namespace fusion {
                 return std::thread([ & ] () {
                     std::function<void()> action = nullptr;
 
-                    while (true) {
+                    while (!executor_interrupted) {
                         std::unique_lock<std::shared_mutex> guard(executor_mutex);
 
                         if (!executor_actions.empty()) {
@@ -41,18 +42,26 @@ namespace fusion {
                         }
                     }
                 });
-            }) {
+            }), executor_interrupted(false) {
                 executor_thread_count = thread_count;
             }
 
             ~ executor () {
+                executor_interrupted = true;
+
                 for (std::size_t i = 0; i < executor_thread_pool.size(); ++i) {
-                    executor_thread_pool.contents().at(i).detach();
+                    if (executor_thread_pool.contents().at(i).joinable()) {
+                        executor_thread_pool.contents().at(i).join();
+                    }
                 }
             }
 
             std::vector<std::thread>& threads () {
                 return executor_thread_pool.contents();
+            }
+
+            void interrupt () {
+                executor_interrupted = true;
             }
 
             void run (const std::function<void()>& action) {
