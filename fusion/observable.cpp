@@ -10,12 +10,12 @@
 
 namespace fusion {
 
-    executor DEFAULT_OBSERVABLE_EXECUTOR(0);
+    executor DEFAULT_OBSERVABLE_EXECUTOR;
 
     template <typename observation_type> class observable {
 
         private:
-            std::vector<function<void()>> observable_actions;
+            std::vector<std::function<void()>> observable_actions;
             executor* observable_executor;
             std::vector<observation_type> observable_observations;
             std::vector<void*> observable_casted_observables;
@@ -53,7 +53,7 @@ namespace fusion {
                 return *new_observable;
             }
 
-            observable<observation_type>& for_each (const function<void(observation_type&)> callback) {
+            observable<observation_type>& for_each (std::function<void(observation_type&)> callback) {
                 observable_actions.emplace_back([ this, callback ] () {
                     for (observation_type& observation : observable_observations) {
                         callback(observation);
@@ -67,7 +67,7 @@ namespace fusion {
                 observable_executor->run([ this, observation ] () {
                     observable_observations.emplace_back(observation);
 
-                    for (const function<void()>& action : observable_actions) {
+                    for (std::function<void()>& action : observable_actions) {
                         action();
                     }
 

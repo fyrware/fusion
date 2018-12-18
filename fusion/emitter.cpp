@@ -9,7 +9,7 @@
 
 namespace fusion {
 
-    const string EMITTER_OBSERVE_ALL;
+    const std::string EMITTER_OBSERVE_ALL;
 
     template <typename emission_type> class emitter {
 
@@ -35,7 +35,7 @@ namespace fusion {
                 emitter_observers.clear();
             }
 
-            observable<emission_type>& observe (const string& name = EMITTER_OBSERVE_ALL) {
+            observable<emission_type>& observe (const std::string& name = EMITTER_OBSERVE_ALL) {
                 auto* observer = new observable<emission_type>();
 
                 if (emitter_observers.find(name) == emitter_observers.end()) {
@@ -47,7 +47,7 @@ namespace fusion {
                 return *observer;
             }
 
-            void emit (const string& name, emission_type emission) {
+            void emit (const std::string& name, emission_type emission) {
 
                 if (emitter_observers.find(name) != emitter_observers.end()) {
                     for (observable<emission_type>* observer : emitter_observers.at(name)) {

@@ -20,6 +20,10 @@ namespace fusion {
                 resize(size);
             }
 
+            std::vector<fill_type>& contents () {
+                return pool_contents;
+            }
+
             void resize (const int size) {
                 if (pool_size > size) while (pool_contents.size() > size) {
                     pool_contents.pop_back();

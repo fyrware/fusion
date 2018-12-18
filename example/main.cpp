@@ -46,6 +46,7 @@ namespace example {
     };
 
     int run () {
+        fusion::executor thread_pool(3);
         fusion::emitter<foo*> foo_emitter;
 
         foo_emitter.observe("hello").for_each([] (foo* x) {
@@ -57,7 +58,7 @@ namespace example {
         });
 
         foo_emitter.emit("hello", new foo("your mom"));
-        foo_emitter.emit("world", new bar("asdf", 69));
+        foo_emitter.emit("world", new bar("asdf", 1234));
 
         return 0;
     }
