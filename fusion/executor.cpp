@@ -26,7 +26,7 @@ namespace fusion {
                 return std::thread([ & ] () {
                     std::function<void()> action = nullptr;
 
-                    while (!executor_interrupted) {
+                    while (!executor_interrupted || !executor_actions.empty()) {
                         std::unique_lock<std::shared_mutex> guard(executor_mutex);
 
                         if (!executor_actions.empty()) {
@@ -50,9 +50,7 @@ namespace fusion {
                 executor_interrupted = true;
 
                 for (std::size_t i = 0; i < executor_thread_pool.size(); ++i) {
-                    if (executor_thread_pool.contents().at(i).joinable()) {
-                        executor_thread_pool.contents().at(i).join();
-                    }
+                    executor_thread_pool.contents().at(i).join();
                 }
             }
 
@@ -65,7 +63,7 @@ namespace fusion {
             }
 
             void run (const std::function<void()>& action) {
-                if (executor_thread_count == 0) {
+                if (executor_thread_count == 0 || executor_interrupted) {
                     action();
                 }
                 else {
