@@ -1,6 +1,8 @@
 # pragma once
 
 # include <functional>
+# include <iostream>
+# include <type_traits>
 # include <vector>
 
 namespace fusion {
@@ -20,8 +22,20 @@ namespace fusion {
                 resize(size);
             }
 
+            ~ pool () {
+                if constexpr (std::is_pointer<fill_type>::value) {
+                    for (size_t i = 0, count = pool_contents.size(); i < count; ++i) {
+                        delete pool_contents.at(i);
+                    }
+                }
+            }
+
             std::vector<fill_type>& contents () {
                 return pool_contents;
+            }
+
+            bool empty () {
+                return pool_contents.empty();
             }
 
             void resize (const int size) {

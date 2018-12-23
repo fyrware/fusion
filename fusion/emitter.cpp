@@ -1,5 +1,6 @@
 # pragma once
 
+# include <iostream>
 # include <map>
 # include <string>
 # include <utility>
@@ -23,28 +24,13 @@ namespace fusion {
 
             ~ emitter () {
                 for (std::pair p : emitter_observers) {
-                    std::vector<observable<emission_type>*> observers = p.second;
+                    std::vector<observable<emission_type>*>& observables = p.second;
 
-                    for (observable<emission_type>* o : observers) {
+                    for (observable<emission_type>* o : observables) {
                         delete o;
+                        o = nullptr;
                     }
-
-                    observers.clear();
                 }
-
-                emitter_observers.clear();
-            }
-
-            observable<emission_type>& observe (const std::string& name = EMITTER_OBSERVE_ALL) {
-                auto* observer = new observable<emission_type>();
-
-                if (emitter_observers.find(name) == emitter_observers.end()) {
-                    emitter_observers.emplace(name, std::vector<observable<emission_type>*>());
-                }
-
-                emitter_observers.at(name).emplace_back(observer);
-
-                return *observer;
             }
 
             void emit (const std::string& name, emission_type emission) {
@@ -60,6 +46,18 @@ namespace fusion {
                         observer->pipe(emission);
                     }
                 }
+            }
+
+            observable<emission_type>& observe (const std::string& name = EMITTER_OBSERVE_ALL) {
+                observable<emission_type>* observer = new observable<emission_type>();
+
+                if (emitter_observers.find(name) == emitter_observers.end()) {
+                    emitter_observers.emplace(name, std::vector<observable<emission_type>*>());
+                }
+
+                emitter_observers.at(name).emplace_back(observer);
+
+                return *observer;
             }
     };
 }

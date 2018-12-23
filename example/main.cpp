@@ -16,14 +16,6 @@ namespace example {
             explicit foo (const std::string& name) {
                 foo_name = name;
             }
-
-            std::string name () {
-                return foo_name;
-            }
-
-            virtual void log () {
-                std::cout << "this is { foo }" << std::endl;
-            }
     };
 
     class bar : public foo {
@@ -35,30 +27,30 @@ namespace example {
             explicit bar (const std::string& name, int size) : foo(name) {
                 bar_size = size;
             }
-
-            int size () {
-                return bar_size;
-            }
-
-            void log () override {
-                std::cout << "this is { bar }" << std::endl;
-            }
     };
 
     int run () {
         fusion::executor thread_pool(3);
         fusion::emitter<foo*> foo_emitter;
 
-        foo_emitter.observe("hello").for_each([] (foo* x) {
-
+        foo_emitter.observe("foo").use_executor(thread_pool).for_each([ & ] (foo* x) {
+            std::cout << "foo" << std::endl;
+            foo_emitter.emit("hello", new foo("your mom"));
         });
 
-        foo_emitter.observe("world").cast<bar*>().for_each([] (bar* x) {
-
+        foo_emitter.observe("hello").use_executor(thread_pool).for_each([ & ] (foo* x) {
+            std::cout << "hello" << std::endl;
+            foo_emitter.emit("world", new bar("asdf", 1234));
         });
 
-        foo_emitter.emit("hello", new foo("your mom"));
-        foo_emitter.emit("world", new bar("asdf", 1234));
+        foo_emitter.observe("world").use_executor(thread_pool).cast<bar*>().for_each([] (bar* x) {
+            std::cout << "world" << std::endl;
+        });
+
+        foo_emitter.emit("foo", new foo("foo"));
+
+        thread_pool.terminate();
+        thread_pool.flush();
 
         return 0;
     }

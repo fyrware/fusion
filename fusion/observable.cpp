@@ -2,8 +2,10 @@
 
 # include <exception>
 # include <functional>
+# include <iostream>
 # include <memory>
 # include <type_traits>
+# include <utility>
 # include <vector>
 
 # include "fusion/executor.cpp"
@@ -16,9 +18,9 @@ namespace fusion {
 
         private:
             std::vector<std::function<void()>> observable_actions;
+            std::vector<void*> observable_casted_observables;
             executor* observable_executor;
             std::vector<observation_type> observable_observations;
-            std::vector<void*> observable_casted_observables;
 
         public:
             observable () : observable_executor(&DEFAULT_OBSERVABLE_EXECUTOR) { };
@@ -26,31 +28,21 @@ namespace fusion {
             ~ observable () {
                 for (void* casted_observable : observable_casted_observables) {
                     delete static_cast<observable<observation_type>*>(casted_observable);
+                    casted_observable = nullptr;
                 }
             }
 
-            observable<observation_type>& use_executor (executor& executor_to_use) {
-                observable_executor = &executor_to_use;
-
-                return *this;
-            }
-
-            template <typename cast_type> observable<cast_type>& cast (bool dynamic = false) {
+            template <typename cast_type> observable<cast_type>& cast () {
                 observable<cast_type>* new_observable = new observable<cast_type>();
 
                 observable_casted_observables.emplace_back(new_observable);
-                observable_actions.emplace_back([ this, dynamic, new_observable ] () {
+                observable_actions.emplace_back([ this, new_observable ] () {
                     for (observation_type& observation : observable_observations) {
-                        if (dynamic) {
-                            new_observable->pipe(dynamic_cast<cast_type>(observation));
-                        }
-                        else {
-                            new_observable->pipe(static_cast<cast_type>(observation));
-                        }
+                        new_observable->pipe(static_cast<cast_type>(observation));
                     }
                 });
 
-                return *new_observable;
+                return new_observable->use_executor(*observable_executor);
             }
 
             observable<observation_type>& for_each (std::function<void(observation_type&)> callback) {
@@ -67,18 +59,25 @@ namespace fusion {
                 observable_executor->run([ this, observation ] () {
                     observable_observations.emplace_back(observation);
 
-                    for (std::function<void()>& action : observable_actions) {
+                    for (const std::function<void()>& action : observable_actions) {
                         action();
                     }
 
                     if (std::is_pointer<observation_type>::value) {
                         for (observation_type observation : observable_observations) {
                             delete observation;
+                            observation = nullptr;
                         }
                     }
 
                     observable_observations.clear();
                 });
+            }
+
+            observable<observation_type>& use_executor (executor& executor_to_use) {
+                observable_executor = &executor_to_use;
+
+                return *this;
             }
     };
 }

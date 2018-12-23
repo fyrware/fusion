@@ -1,11 +1,13 @@
 # pragma once
 
+# include <algorithm>
 # include <functional>
+# include <iostream>
 # include <queue>
 # include <mutex>
-# include <shared_mutex>
 # include <string>
 # include <thread>
+# include <utility>
 # include <vector>
 
 # include "fusion/pool.cpp"
@@ -16,58 +18,74 @@ namespace fusion {
 
         private:
             std::queue<std::function<void()>> executor_actions;
-            std::shared_mutex executor_mutex;
-            bool executor_interrupted;
+            std::mutex executor_mutex;
             int executor_thread_count;
+            bool executor_running;
+            bool executor_terminated;
             pool<std::thread> executor_thread_pool;
 
+            void execute_next_action () {
+                std::function<void()> action = nullptr;
+
+                executor_mutex.lock();
+
+                if (!executor_actions.empty()) {
+                    action = executor_actions.front();
+                    executor_actions.pop();
+                }
+
+                executor_mutex.unlock();
+
+                if (action != nullptr) {
+                    action();
+                    action = nullptr;
+                }
+            }
+
         public:
-            explicit executor (const int thread_count = 0) : executor_thread_pool(thread_count, [ & ] () -> std::thread {
-                return std::thread([ & ] () {
-                    std::function<void()> action = nullptr;
-
-                    while (!executor_interrupted || !executor_actions.empty()) {
-                        std::unique_lock<std::shared_mutex> guard(executor_mutex);
-
-                        if (!executor_actions.empty()) {
-                            action = executor_actions.front();
-                            executor_actions.pop();
-                        }
-
-                        guard.unlock();
-
-                        if (action != nullptr) {
-                            action();
-                            action = nullptr;
-                        }
+            explicit executor (const int thread_count = 0) : executor_thread_pool(thread_count, [ this ] () -> std::thread {
+                return std::thread([ this ] () {
+                    while (!executor_terminated) if (executor_running) {
+                        execute_next_action();
                     }
                 });
-            }), executor_interrupted(false) {
+            }) {
+                executor_running = true;
+                executor_terminated = false;
                 executor_thread_count = thread_count;
             }
 
             ~ executor () {
-                executor_interrupted = true;
+                terminate();
+            }
 
-                for (std::size_t i = 0; i < executor_thread_pool.size(); ++i) {
-                    executor_thread_pool.contents().at(i).join();
+            void flush () {
+                executor_running = false;
+
+                while (!executor_actions.empty()) {
+                    execute_next_action();
                 }
+
+                executor_running = true;
             }
 
-            std::vector<std::thread>& threads () {
-                return executor_thread_pool.contents();
-            }
-
-            void interrupt () {
-                executor_interrupted = true;
-            }
-
-            void run (const std::function<void()>& action) {
-                if (executor_thread_count == 0 || executor_interrupted) {
+            void run (std::function<void()> action) {
+                if (executor_running && executor_thread_count == 0) {
                     action();
                 }
                 else {
                     executor_actions.push(action);
+                }
+            }
+
+            void terminate () {
+                executor_running = false;
+                executor_terminated = true;
+
+                for (std::size_t i = 0; i < executor_thread_count; ++i) {
+                    if (executor_thread_pool.contents().at(i).joinable()) {
+                        executor_thread_pool.contents().at(i).join();
+                    }
                 }
             }
     };
