@@ -59,14 +59,22 @@ namespace fusion {
                 terminate();
             }
 
+            void advance () {
+                executor_running = true;
+            }
+
             void flush () {
-                executor_running = false;
+                interrupt();
 
                 while (!executor_actions.empty()) {
                     execute_next_action();
                 }
 
-                executor_running = true;
+                advance();
+            }
+
+            void interrupt () {
+                executor_running = false;
             }
 
             void run (std::function<void()> action) {
