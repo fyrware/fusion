@@ -49,7 +49,6 @@ namespace example {
 
         foo_emitter.emit("foo", new foo("foo"));
 
-        thread_pool.terminate();
         thread_pool.flush();
 
         return 0;
