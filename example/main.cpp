@@ -9,28 +9,18 @@ namespace example {
 
     class foo {
 
-        private:
-            std::string foo_name;
-
         public:
-            explicit foo (const std::string& name) {
-                foo_name = name;
-            }
+            explicit foo (const std::string& name) { }
     };
 
     class bar : public foo {
 
-        private:
-            int bar_size;
-
         public:
-            explicit bar (const std::string& name, int size) : foo(name) {
-                bar_size = size;
-            }
+            explicit bar (const std::string& name, int size) : foo(name) { }
     };
 
     int run () {
-        fusion::executor thread_pool(3);
+        fusion::executor thread_pool(0);
         fusion::emitter<foo*> foo_emitter;
 
         foo_emitter.observe("foo").use_executor(thread_pool).for_each([ & ] (foo* x) {
@@ -49,7 +39,8 @@ namespace example {
 
         foo_emitter.emit("foo", new foo("foo"));
 
-        thread_pool.flush();
+//        thread_pool.terminate();
+//        thread_pool.flush();
 
         return 0;
     }

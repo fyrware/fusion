@@ -63,8 +63,8 @@ namespace fusion {
                         action();
                     }
 
-                    if (std::is_pointer<observation_type>::value) {
-                        for (observation_type observation : observable_observations) {
+                    if (std::is_pointer<observation_type>::value && observable_casted_observables.empty()) { // TODO improve this? without checking if casted observables is empty,
+                        for (observation_type observation : observable_observations) {                       // TODO we get invalid pointer, or double delete, or whatever it's called
                             delete observation;
                             observation = nullptr;
                         }
