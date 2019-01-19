@@ -20,7 +20,7 @@ namespace example {
     };
 
     int run () {
-        fusion::executor thread_pool(0);
+        fusion::executor thread_pool(3);
         fusion::emitter<foo*> foo_emitter;
 
         foo_emitter.observe("foo").use_executor(thread_pool).for_each([ & ] (foo* x) {
@@ -39,8 +39,8 @@ namespace example {
 
         foo_emitter.emit("foo", new foo("foo"));
 
-//        thread_pool.terminate();
-//        thread_pool.flush();
+        thread_pool.terminate();
+        thread_pool.flush();
 
         return 0;
     }

@@ -26,6 +26,8 @@ namespace fusion {
             observable () : observable_executor(&DEFAULT_OBSERVABLE_EXECUTOR) { };
 
             ~ observable () {
+                observable_executor->flush();
+
                 for (void* casted_observable : observable_casted_observables) {
                     delete static_cast<observable<observation_type>*>(casted_observable);
                     casted_observable = nullptr;
@@ -64,9 +66,9 @@ namespace fusion {
                     }
 
                     if (std::is_pointer<observation_type>::value && observable_casted_observables.empty()) { // TODO improve this? without checking if casted observables is empty,
-                        for (observation_type observation : observable_observations) {                       // TODO we get invalid pointer, or double delete, or whatever it's called
-                            delete observation;
-                            observation = nullptr;
+                        for (observation_type observation : observable_observations) {                       // TODO we get invalid pointer, or double delete, or whatever it's called.
+                            delete observation;                                                              // TODO solution breaks if more than one casted observable? maybe.
+                            observation = nullptr;                                                           // TODO should have listened, and used smart pointers. ego. oof.
                         }
                     }
 
